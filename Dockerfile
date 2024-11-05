@@ -1,12 +1,12 @@
-# Etapa de construcción
-FROM maven:3.8.7-openjdk-21 AS build
-WORKDIR /app
+FROM ubuntu:latest AS build
+RUN apt-get update
+RUN apt-get install openjdk-21-jdk -y
+RUN apt-get install maven -y
 COPY . .
-RUN mvn clean package -DskipTests
+RUN mvn clean package
 
 FROM openjdk:21-jdk-slim
-WORKDIR /app
-COPY --from=build /app/target/BioCundi.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY --from=build /target/BioCundi.jar app.jar
+ENTRYPOINT ["java","-jar","app.jar"]
 
